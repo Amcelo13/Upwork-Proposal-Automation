@@ -1,0 +1,148 @@
+{
+  "name": "Generate Mermaid Code",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d47590b5-3683-4afe-bc27-a25fb94a32d5",
+              "name": "mermaidCode",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        -100
+      ],
+      "id": "11888869-b10f-43cd-b1f9-61e60baabba2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        -100
+      ],
+      "id": "2479ee02-77d4-4d1f-86e6-734f422316ca",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        140
+      ],
+      "id": "6c95891b-3d99-4464-bde5-87477de026c6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "r2xmsBOtY2vLqwwJ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful, intelligent Mermaid.js code writer."
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=Your task is to take as input an Upwork job description and return as output a Mermaid diagram that I can visualize using a subsequent Mermaid.js tool.\n\nOutput your results in plaintext using Mermaid code formatting. Don't output anything but the Mermaid diagram code.\n\nHere's an example of what your output should look like:\n\ngraph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;\n\nRules:\n- You only output flowcharts. Nothing else. No sequence diagrams, no Gantt charts—only flowcharts.\n- Do not output any accessory formatting information, like ```mermaid.\n- Your first character should be g.\n- Just give the blue print how the project will be done/ managed and the flow of the solution\n-  Don't include anything else from job descriptions, the things not to include involves - past work samples etc , anything that is not the part of the flow of the project \n- Use descriptive node labels that clearly identify technical components\n- Use 10-15 nodes for appropriate detail level\n- Show relationships between frontend and backend components only if the job is of full stack role and work \n- Create a technical blueprint showing the development workflow and solution architecture\n\nJobDescription :{{ $json.query }}\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -20,
+        -100
+      ],
+      "id": "7c3b0fc5-e03d-438a-bc76-5c8d16e86e57",
+      "name": "Basic LLM Chain"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "06f1351c-2315-4fd3-8a84-709e8f495ea6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a19690fa807f41963f11b22400dbac2aacb7c155f4edb4994212c91040c566d9"
+  },
+  "id": "VjtGb6igp6FOi4T5",
+  "tags": []
+}

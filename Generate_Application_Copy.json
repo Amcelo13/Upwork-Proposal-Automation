@@ -1,0 +1,157 @@
+{
+  "name": "Generate Application Copy",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "5fba8ecf-a566-4fcc-a858-19b5d27cdfb7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent Upwork application writer.",
+              "role": "system"
+            },
+            {
+              "content": "=I'm an full stack specialist and Nextjs expert applying to jobs on freelance platforms.\n\nYour task is to take as input an Upwork job description and return as output a customized proposal.\n\nHigh-performing proposals are typically templated as follows:\n\n```\nHi, I do {thing} all the time. Am so confident I'm the right fit for you that I just created a workflow diagram + a demo of your {thing} in no-code: $$$\n\nAbout me: I'm a {relevantJobDescription} that has done {coolRelevantThing}. Of note, {otherCoolTieIn}.\n\nHappy to do this for you anytime—just respond to this proposal (else I don't get a chat window). \n\nThank you!\n```\n\nOutput your results in JSON using this format:\n\n{\"proposal\":\"Your proposal\"}\n\nRules:\n- $$$ is what we're using to replace links later on, so leave that untouched.\n- Write in a casual, spartan tone of voice.\n- Don't use emojis or flowery language.\n- If there's a name included somewhere in the description, add it after \"Hi\"\n\nSome facts about me for the personalization: {{ $json.aboutMe }}\n"
+            },
+            {
+              "content": "{\"jobDescription\":\"{{ $('Execute Workflow Trigger').item.json.query }}\"}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        0
+      ],
+      "id": "1857abfb-b797-4b12-b179-0e51dcd4d8c2",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "r2xmsBOtY2vLqwwJ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f767b72b-292e-492e-9d08-30ebfd480975",
+              "name": "response",
+              "value": "={{ $json.message.content.proposal }}",
+              "type": "string"
+            },
+            {
+              "id": "bf16db97-b184-44a7-adbe-d140404c915c",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        0
+      ],
+      "id": "4c040ade-ead0-4923-96fa-e07889c78bd6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39edaca5-8da5-4df5-9782-26b00bd4a433",
+              "name": "aboutMe",
+              "value": "I'm a full stack developer specialist and freelancer, skilled in building outreach systems, CRMs, project management tools, tailored API integrations, and visually stunning UIs using Tailwind CSS.\n\nSome notable things I've done:- One of my standout projects is Black Therapy Network, a $7,000 platform I delivered in just 3 months. It’s a therapist-client based telephonic and video calling website designed specifically to support mental health in the Black community. I built the entire system end-to-end — including a scalable backend, secure payment infrastructure, and appointment scheduling. To enhance accessibility and engagement, I integrated an AI-powered avatar tool capable of generating personalized text-to-video messages with real-time translation, syncing three different services to work together seamlessly.\nI have delivered 4 MVP's within 6 months and doing thousands of users combined as my coding is accompained with AI that reduces delivery time and accuracy of the deliverables",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        140,
+        0
+      ],
+      "id": "a5151d6c-0d06-496f-ba0a-933419963b07",
+      "name": "Set Variables"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5f4b1950-0f09-4720-8eb8-4b14b454c1c7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a19690fa807f41963f11b22400dbac2aacb7c155f4edb4994212c91040c566d9"
+  },
+  "id": "UiBqX6kqxyyP5hct",
+  "tags": []
+}
